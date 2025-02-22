@@ -5,7 +5,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from todo_app.models import TaskWithId, UpdateTask, Task
 from todo_app.operations import read_all_tasks, read_task_by_id, create_task, modify_task, remove_task
-from todo_app.security import fake_users_db, UserInDB, fakely_hash_password, fake_token_generator
+from todo_app.security import fake_users_db, UserInDB, fakely_hash_password, fake_token_generator, User, \
+    get_user_from_token
 
 tasks_router = APIRouter(prefix='/tasks')
 
@@ -64,3 +65,7 @@ def delete_task(id: int):
     if not deleted:
         raise HTTPException(status_code=404, detail="Task not found")
     return deleted
+
+@tasks_router.get("/users/me", response_model=User)
+def reade_me(current_user: User = Depends(get_user_from_token)):
+    return current_user

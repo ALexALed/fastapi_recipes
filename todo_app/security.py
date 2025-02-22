@@ -1,7 +1,5 @@
-from http.client import HTTPException
-
 from pydantic import BaseModel
-from fastapi import Depends, status
+from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 fake_users_db = {
@@ -45,14 +43,14 @@ def fake_token_resolver(token: str) -> UserInDB | None:
         return user
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="tasks/token")
 
 
 def get_user_from_token(token: str = Depends(oauth2_scheme)) -> UserInDB:
     user = fake_token_resolver(token)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_410_UNAUTHORIZED,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
             headers={"WWW-Authentificate": "Bearer"}
         )
