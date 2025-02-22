@@ -10,7 +10,7 @@ from todo_app.security import fake_users_db, UserInDB, fakely_hash_password, fak
 
 tasks_router = APIRouter(prefix='/tasks')
 
-@tasks_router.post("/token")
+@tasks_router.post("/token", include_in_schema=False)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user_dict = fake_users_db.get(form_data.username)
     if not user_dict:
