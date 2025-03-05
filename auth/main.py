@@ -8,6 +8,7 @@ from starlette import status
 from auth.db import Base, engine, get_session
 from auth.jwt_security import decode_token, Token, authenticate_user, create_access_token
 from auth.operations import add_user
+from auth.rbac import Role
 from auth.responses import ResponseCreateUser, UserCreateBody, UserCreateResponse
 
 
@@ -28,6 +29,26 @@ def register(user: UserCreateBody, session: Session = Depends(get_session)) -> d
     user = add_user(
         session=session,
         **user.model_dump()
+    )
+    if not user:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "username or email already exists"
+        )
+    user_response = UserCreateResponse(
+        username=user.username,
+        email=user.email
+    )
+    return {"message": "user created", "user": user_response}
+
+
+@auth_router.post('/register/premium-user', status_code=status.HTTP_201_CREATED, response_model=ResponseCreateUser,
+                  responses={status.HTTP_409_CONFLICT: {"description": "The user already exists"}})
+def register(user: UserCreateBody, session: Session = Depends(get_session)) -> dict[str, UserCreateResponse]:
+    user = add_user(
+        session=session,
+        **user.model_dump(),
+        role=Role.premium
     )
     if not user:
         raise HTTPException(
