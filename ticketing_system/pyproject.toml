@@ -1,0 +1,11 @@
+[project]
+name = "ticketing-system"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aisqlite>=1.1.0",
+    "fastapi[all]>=0.115.8",
+    "sqlalchemy>=2.0.38",
+]

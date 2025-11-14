@@ -3,6 +3,8 @@ from sqlalchemy import create_engine
 
 DATABASE_URL = "sqlite:///./test.db"
 
+# This Base class maintains a catalog of classes and
+# tables you’ve defined and is central to SQLAlchemy’s ORM functionality.
 class Base(DeclarativeBase):
     pass
 
